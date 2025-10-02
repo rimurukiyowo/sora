@@ -1,0 +1,10 @@
+# File rahasia
+client_secret.json
+token.pickle
+credentials.json
+.env
+
+# Folder besar / cache
+__pycache__/
+node_modules/
+dist/

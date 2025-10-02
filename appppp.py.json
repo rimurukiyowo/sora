@@ -1,0 +1,94 @@
+import os
+import json
+import pathlib
+import flask
+from flask import Flask, request, render_template, redirect, url_for, jsonify
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+
+app = Flask(__name__)
+app.secret_key = "your_secret_key"
+
+# Path untuk menyimpan token
+TOKEN_FILE = "token.json"
+CLIENT_SECRET_FILE = "client_secret.json"
+SCOPES = ["https://www.googleapis.com/auth/drive"]
+
+def save_tokens(creds):
+    with open(TOKEN_FILE, "w") as f:
+        f.write(creds.to_json())
+
+def load_tokens():
+    if os.path.exists(TOKEN_FILE):
+        return Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+    return None
+
+@app.route("/")
+def index():
+    creds = load_tokens()
+    authorized = creds and creds.valid
+    return render_template("index.html", authorized=authorized)
+
+@app.route("/auth")
+def auth():
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRET_FILE,
+        scopes=SCOPES,
+        redirect_uri=url_for("oauth2callback", _external=True),
+    )
+    auth_url, state = flow.authorization_url(
+        access_type="offline",
+        prompt="consent"
+    )
+    flask.session["state"] = state
+    return redirect(auth_url)
+
+@app.route("/oauth2callback")
+def oauth2callback():
+    state = flask.session["state"]
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRET_FILE,
+        scopes=SCOPES,
+        state=state,
+        redirect_uri=url_for("oauth2callback", _external=True),
+    )
+    flow.fetch_token(authorization_response=request.url)
+
+    creds = flow.credentials
+    save_tokens(creds)
+
+    return redirect(url_for("index"))
+
+@app.route("/copy", methods=["POST"])
+def copy_files():
+    creds = load_tokens()
+    if not creds or not creds.valid:
+        return jsonify({"error": "Not authorized"}), 401
+
+    drive = build("drive", "v3", credentials=creds)
+
+    data = request.get_json()
+    file_ids = data.get("fileIds", [])
+    copies_per_file = data.get("copiesPerFile", 1)
+    dest_folder = data.get("destFolderId")
+
+    results = []
+    for file_id in file_ids:
+        for _ in range(copies_per_file):
+            metadata = {}
+            if dest_folder:
+                metadata["parents"] = [dest_folder]
+
+            try:
+                copied = drive.files().copy(
+                    fileId=file_id, body=metadata, fields="id, name, parents"
+                ).execute()
+                results.append({"original": file_id, "copied": copied})
+            except Exception as e:
+                results.append({"original": file_id, "error": str(e)})
+
+    return jsonify({"ok": True, "items": results})
+
+if __name__ == "__main__":
+    app.run("localhost", 5000, debug=True)

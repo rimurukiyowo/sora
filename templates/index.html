@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Google Drive Copier (Python)</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #d1c4e9, #f8bbd0, #b39ddb);
+      background-attachment: fixed;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      color: #4a148c;
+    }
+    textarea, input {
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #8e24aa;
+    }
+    pre {
+      background: #f3f3f3;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Google Drive Copier (Python)</h1>
+
+  {% if authorized %}
+    <p>Status: ✅ Authorized</p>
+  {% else %}
+    <p>Status: ❌ Not authorized</p>
+    <a href="/auth">Authorize with Google</a>
+  {% endif %}
+
+  <hr/>
+
+  <h3>Copy Files</h3>
+  <textarea id="fileIds" rows="5" placeholder="File IDs, comma separated"></textarea><br/>
+  <label>Copies per file:</label>
+  <input id="copies" type="number" value="1" min="1"><br/>
+  <label>Destination folder ID (optional):</label>
+  <input id="dest" type="text"><br/>
+  <button onclick="startCopy()">Start Copy</button>
+
+  <h3>Result</h3>
+  <pre id="log"></pre>
+
+  {% if result %}
+  <script>
+    Swal.fire({
+      title: "Berhasil!",
+      html: `Berhasil copy <b>{{ result|length }}</b> file.<br><br>
+             <textarea style="width:100%;height:120px;" readonly>{{ result }}</textarea>`,
+      icon: "success",
+      confirmButtonText: "OK",
+      width: 600
+    });
+  </script>
+  {% endif %}
+
+  <script>
+    async function startCopy(){
+      const ids = document.getElementById("fileIds").value
+        .split(",").map(s => s.trim()).filter(Boolean);
+      const copies = parseInt(document.getElementById("copies").value, 10) || 1;
+      const dest = document.getElementById("dest").value.trim() || null;
+
+      const resp = await fetch("/copy", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({fileIds: ids, copiesPerFile: copies, destFolderId: dest})
+      });
+
+      const data = await resp.json();
+      document.getElementById("log").textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
