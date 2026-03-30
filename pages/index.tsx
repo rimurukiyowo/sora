@@ -44,11 +44,18 @@ export default function Home() {
         return;
       }
 
-      const fetchedFiles: FileItem[] = (data.files || []).map((f: any) => ({
-        id: f.id,
-        name: f.name,
-        link: `https://drive.google.com/file/d/${f.id}/view?utm_source=grfkflwr&utm_medium=web&utm_campaign=drivesdk`,
-      }));
+      const fetchedFiles: FileItem[] = (data.files || [])
+        .map((f: any) => ({
+          id: f.id,
+          name: f.name,
+          link: `https://drive.google.com/file/d/${f.id}/view?utm_source=grfkflwr&utm_medium=web&utm_campaign=drivesdk`,
+        }))
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          })
+        );
 
       setFiles(fetchedFiles);
     } catch (err: any) {
@@ -59,16 +66,38 @@ export default function Home() {
     }
   };
 
-  const copy = (text: string) => {
+  const safeAlert = (msg: string) => {
+    if (typeof window !== "undefined") {
+      alert(msg);
+    }
+  };
+
+  const copy = (text: string, msg: string) => {
+    if (typeof window === "undefined") return;
     navigator.clipboard.writeText(text);
-    alert("Disalin!");
+    safeAlert(msg);
+  };
+
+  const copyNames = () => {
+    if (files.length === 0) return safeAlert("Tidak ada data!");
+    copy(files.map((f) => f.name).join("\n"), "Nama disalin!");
+  };
+
+  const copyLinks = () => {
+    if (files.length === 0) return safeAlert("Tidak ada data!");
+    copy(files.map((f) => f.link).join("\n"), "Link disalin!");
+  };
+
+  const copyAll = () => {
+    if (files.length === 0) return safeAlert("Tidak ada data!");
+    copy(files.map((f) => `${f.name} ${f.link}`).join("\n"), "Semua disalin!");
   };
 
   const particles = Array.from({ length: 25 });
 
   return (
     <>
-      {/* 🔥 RESET BODY (HILANGIN PUTIH) */}
+      {/* FIX PUTIH */}
       <style>{`
         body {
           margin: 0;
@@ -90,7 +119,7 @@ export default function Home() {
       `}</style>
 
       <div style={styles.wrapper}>
-        {/* ❄️🌸⭐ PARTICLES */}
+        {/* PARTICLES */}
         <div style={styles.particleWrap}>
           {particles.map((_, i) => (
             <span
@@ -110,7 +139,7 @@ export default function Home() {
         <div style={styles.card}>
           <div style={styles.header}>
             <h1 style={styles.title}>WinterLinkFindU</h1>
-            <p style={styles.subtitle}>winter uhuyyy!! </p>
+            <p style={styles.subtitle}>winter uhuyyy!! 💖💖💖</p>
             <p style={styles.subtitle}>💖mohon jangan disebar💖</p>
           </div>
 
@@ -131,36 +160,36 @@ export default function Home() {
           {files.length > 0 && (
             <>
               <div style={styles.actions}>
-                <button
-                  onClick={() => copy(files.map((f) => f.name).join("\n"))}
-                >
-                  Nama
-                </button>
-                <button
-                  onClick={() => copy(files.map((f) => f.link).join("\n"))}
-                >
-                  Link
-                </button>
-                <button
-                  onClick={() =>
-                    copy(files.map((f) => `${f.name} ${f.link}`).join("\n"))
-                  }
-                >
-                  Semua
-                </button>
+                <button style={styles.btn} onClick={copyNames}>Copy Nama</button>
+                <button style={styles.btn} onClick={copyAll}>Copy Semua</button>
+                <button style={styles.btn} onClick={copyLinks}>Copy Link</button>
               </div>
 
-              <div style={styles.list}>
-                {files.map((f, i) => (
-                  <div key={f.id} style={styles.item}>
-                    <span>
-                      {i + 1}. {f.name}
-                    </span>
-                    <a href={f.link} target="_blank" rel="noreferrer">
-                      Buka
-                    </a>
-                  </div>
-                ))}
+              <p style={styles.total}>Total: {files.length}</p>
+
+              <div style={{ overflowX: "auto" }}>
+                <table style={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Nama</th>
+                      <th>Link</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {files.map((f, i) => (
+                      <tr key={f.id}>
+                        <td>{i + 1}</td>
+                        <td>{f.name}</td>
+                        <td>
+                          <a href={f.link} target="_blank" rel="noreferrer">
+                            Buka
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </>
           )}
@@ -181,10 +210,7 @@ const styles: any = {
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-
-    // 🔥 FULL COLOR TANPA PUTIH
-    background:
-      "linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2,#0f2027)",
+    background: "linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2,#0f2027)",
     backgroundSize: "400% 400%",
     animation: "gradientMove 15s ease infinite",
   },
@@ -257,23 +283,27 @@ const styles: any = {
     gap: "10px",
   },
 
-  list: {
-    marginTop: "15px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
+  btn: {
+    padding: "8px",
+    border: "none",
+    borderRadius: "10px",
+    background: "#ffffff22",
+    color: "#fff",
+    cursor: "pointer",
   },
 
-  item: {
-    display: "flex",
-    justifyContent: "space-between",
-    background: "rgba(255,255,255,0.1)",
-    padding: "8px",
-    borderRadius: "8px",
+  total: {
+    marginTop: "10px",
   },
 
   error: {
     color: "#ffb3b3",
     marginTop: "10px",
+  },
+
+  table: {
+    width: "100%",
+    marginTop: "10px",
+    background: "rgba(255,255,255,0.1)",
   },
 };
