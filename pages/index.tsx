@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 
 type FileItem = {
@@ -48,7 +49,7 @@ export default function Home() {
         .map((f: any) => ({
           id: f.id,
           name: f.name,
-          link: `https://drive.google.com/file/d/${f.id}/view?/grfkflwr/drivedsk`,
+          link: `https://drive.google.com/file/d/${f.id}/view/grfkflwr/drivedsk`,
         }))
         .sort((a, b) =>
           a.name.localeCompare(b.name, undefined, {
@@ -66,40 +67,37 @@ export default function Home() {
     }
   };
 
-  const safeAlert = (msg: string) => {
-    if (typeof window !== "undefined") alert(msg);
-  };
-
   const copy = (text: string, msg: string) => {
-    if (typeof window === "undefined") return;
     navigator.clipboard.writeText(text);
-    safeAlert(msg);
+    alert(msg);
   };
 
   const copyNames = () => {
-    if (!files.length) return safeAlert("Tidak ada data!");
+    if (!files.length) return alert("Tidak ada data!");
     copy(files.map((f) => f.name).join("\n"), "Nama disalin!");
   };
 
   const copyLinks = () => {
-    if (!files.length) return safeAlert("Tidak ada data!");
+    if (!files.length) return alert("Tidak ada data!");
     copy(files.map((f) => f.link).join("\n"), "Link disalin!");
   };
 
   const copyAll = () => {
-    if (!files.length) return safeAlert("Tidak ada data!");
+    if (!files.length) return alert("Tidak ada data!");
     copy(files.map((f) => `${f.name} ${f.link}`).join("\n"), "Semua disalin!");
   };
 
-  const particles = Array.from({ length: 30 });
-  const icons = ["❄️", "🌸", "🍃"];
+  const particles = Array.from({ length: 25 });
+  const icons = ["❄️", "🌸", "🍒", "🍃", "🍅", "💞", "☘️"];
 
   return (
     <>
+      {/* FIX VIEWPORT HP */}
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
       <style>{`
         body {
           margin: 0;
-          overflow: hidden;
         }
 
         @keyframes fall {
@@ -112,6 +110,10 @@ export default function Home() {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
+        }
+
+        input {
+          font-size: 16px; /* biar ga zoom di iPhone */
         }
       `}</style>
 
@@ -136,8 +138,8 @@ export default function Home() {
         <div style={styles.card}>
           <div style={styles.header}>
             <h1 style={styles.title}>WinterLinkFindU</h1>
-            <p style={styles.subtitle}>WINTER</p>
-            <p style={styles.subtitle}>💖 jangan disebar ya 💖</p>
+            <p style={styles.subtitle}>by WINTER</p>
+            <p style={styles.subtitle}>💞Jangan Sebar💞</p>
           </div>
 
           <div style={styles.inputWrap}>
@@ -170,7 +172,6 @@ export default function Home() {
 
               <p style={styles.total}>Total: {files.length}</p>
 
-              {/* LIST STYLE */}
               <div style={styles.listWrap}>
                 {files.map((f, i) => (
                   <div key={f.id} style={styles.listItem}>
@@ -197,8 +198,8 @@ export default function Home() {
 
 const styles: any = {
   wrapper: {
-    position: "fixed",
-    inset: 0,
+    minHeight: "100vh",
+    width: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -206,6 +207,7 @@ const styles: any = {
     backgroundSize: "300% 300%",
     animation: "gradientMove 12s ease infinite",
     fontFamily: "sans-serif",
+    padding: "12px",
   },
 
   particleWrap: {
@@ -224,10 +226,10 @@ const styles: any = {
 
   card: {
     width: "100%",
-    maxWidth: "380px",
-    height: "90vh",
-    borderRadius: "25px",
-    padding: "20px",
+    maxWidth: "420px",
+    maxHeight: "95vh",
+    borderRadius: "20px",
+    padding: "16px",
     background: "rgba(255,255,255,0.15)",
     backdropFilter: "blur(20px)",
     color: "#fff",
@@ -242,7 +244,7 @@ const styles: any = {
   },
 
   title: {
-    fontSize: "1.5rem",
+    fontSize: "1.4rem",
     fontWeight: "700",
     margin: 0,
   },
@@ -250,7 +252,6 @@ const styles: any = {
   subtitle: {
     fontSize: "0.8rem",
     opacity: 0.8,
-    margin: "2px 0",
   },
 
   inputWrap: {
@@ -260,19 +261,17 @@ const styles: any = {
 
   input: {
     flex: 1,
-    padding: "10px",
+    padding: "12px",
     borderRadius: "12px",
     border: "none",
-    outline: "none",
   },
 
   btnMain: {
-    padding: "10px 14px",
+    padding: "12px 14px",
     borderRadius: "12px",
     border: "none",
     background: "linear-gradient(135deg,#ff758c,#ff7eb3)",
     color: "#fff",
-    cursor: "pointer",
     fontWeight: "600",
   },
 
@@ -289,14 +288,12 @@ const styles: any = {
     border: "none",
     background: "rgba(255,255,255,0.2)",
     color: "#fff",
-    cursor: "pointer",
     fontSize: "0.8rem",
   },
 
   total: {
     marginTop: "8px",
     fontSize: "0.85rem",
-    opacity: 0.8,
   },
 
   error: {
@@ -308,16 +305,18 @@ const styles: any = {
   listWrap: {
     marginTop: "10px",
     overflowY: "auto",
+    flex: 1,
   },
 
   listItem: {
     background: "rgba(255,255,255,0.15)",
-    padding: "10px",
+    padding: "12px",
     borderRadius: "12px",
     marginBottom: "8px",
     display: "flex",
     flexDirection: "column",
-    gap: "5px",
+    gap: "6px",
+    wordBreak: "break-word",
   },
 
   index: {
