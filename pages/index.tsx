@@ -136,7 +136,7 @@ export default function Home() {
         <div style={styles.card}>
           <div style={styles.header}>
             <h1 style={styles.title}>WinterLinkFindU</h1>
-            <p style={styles.subtitle}>UI versi HP ✨</p>
+            <p style={styles.subtitle}>WINTER</p>
             <p style={styles.subtitle}>💖 jangan disebar ya 💖</p>
           </div>
 
