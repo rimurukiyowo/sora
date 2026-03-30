@@ -95,25 +95,32 @@ const fallbackCopy = (text: string, message: string) => {
   document.body.removeChild(textarea);
 };
 
+const copyAllNames = () => {
   if (files.length === 0) {
-  alert('Tidak ada data untuk disalin!');
-  return;
-}
+    alert('Tidak ada data untuk disalin!');
+    return;
+  }
+  const names = files.map(file => file.name).join('\n');
+  copyToClipboard(names, 'Semua nama berhasil disalin!');
+};
 
-  const copyAllNames = () => {
-    const names = files.map(file => file.name).join('\n');
-    copyToClipboard(names, 'Semua nama berhasil disalin!');
-  };
+const copyAllLinks = () => {
+  if (files.length === 0) {
+    alert('Tidak ada data untuk disalin!');
+    return;
+  }
+  const links = files.map(file => file.link).join('\n');
+  copyToClipboard(links, 'Semua link berhasil disalin!');
+};
 
-  const copyAllLinks = () => {
-    const links = files.map(file => file.link).join('\n');
-    copyToClipboard(links, 'Semua link berhasil disalin!');
-  };
-
-  const copyAllNamesAndLinks = () => {
-    const combined = files.map(file => `${file.name} ${file.link}`).join('\n');
-    copyToClipboard(combined, 'Semua nama dan link berhasil disalin!');
-  };
+const copyAllNamesAndLinks = () => {
+  if (files.length === 0) {
+    alert('Tidak ada data untuk disalin!');
+    return;
+  }
+  const combined = files.map(file => `${file.name} ${file.link}`).join('\n');
+  copyToClipboard(combined, 'Semua nama dan link berhasil disalin!');
+};
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
