@@ -12,7 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const apiKey = "AIzaSyD71nWVbtMxWK4T05Ty4qMuIRTP4ij2i48"; // ganti API key kamu
+  const apiKey = "AIzaSyD71nWVbtMxWK4T05Ty4qMuIRTP4ij2i48";
 
   const extractFolderId = (input: string) => {
     const match = input.match(/[-\w]{25,}/);
@@ -23,7 +23,7 @@ export default function Home() {
     const folderId = extractFolderId(folderInput);
 
     if (!folderId) {
-      setError("Masukkan link atau ID folder yang valid.");
+      setError("Masukkan link / ID folder yang valid.");
       setFiles([]);
       return;
     }
@@ -39,26 +39,16 @@ export default function Home() {
       const data = await res.json();
 
       if (!res.ok || data.error) {
-        setError(
-          data?.error?.message ||
-            "Gagal mengambil data. Pastikan folder public & API valid.",
-        );
+        setError(data?.error?.message || "Gagal mengambil data.");
         setFiles([]);
         return;
       }
 
-      const fetchedFiles: FileItem[] = (data.files || [])
-        .map((file: { id: string; name: string }) => ({
-          id: file.id,
-          name: file.name,
-          link: `https://drive.google.com/file/d/${file.id}/view?utm_source=grfkflwr&utm_medium=web&utm_campaign=drivesdk`,
-        }))
-        .sort((a, b) =>
-          a.name.localeCompare(b.name, undefined, {
-            numeric: true,
-            sensitivity: "base",
-          }),
-        );
+      const fetchedFiles: FileItem[] = (data.files || []).map((f: any) => ({
+        id: f.id,
+        name: f.name,
+        link: `https://drive.google.com/file/d/${f.id}/view?utm_source=grfkflwr&utm_medium=web&utm_campaign=drivesdk`,
+      }));
 
       setFiles(fetchedFiles);
     } catch (err: any) {
@@ -69,36 +59,39 @@ export default function Home() {
     }
   };
 
-  const copy = (text: string, msg: string) => {
+  const copy = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert(msg);
+    alert("Disalin!");
   };
 
-  const particles = Array.from({ length: 40 });
+  const particles = Array.from({ length: 25 });
 
   return (
     <div style={styles.wrapper}>
-      {/* ❄️🌸 PARTICLES */}
-      <div style={styles.particleContainer}>
+      {/* ❄️🌸⭐ PARTICLES */}
+      <div style={styles.particleWrap}>
         {particles.map((_, i) => (
           <span
             key={i}
             style={{
               ...styles.particle,
               left: `${Math.random() * 100}%`,
-              animationDuration: `${5 + Math.random() * 5}s`,
-              fontSize: `${12 + Math.random() * 18}px`,
+              animationDuration: `${12 + Math.random() * 10}s`,
+              fontSize: `${12 + Math.random() * 10}px`,
             }}
           >
-            {i % 2 === 0 ? "❄️" : "🌸"}
+            {i % 3 === 0 ? "❄️" : i % 3 === 1 ? "🌸" : "⭐"}
           </span>
         ))}
       </div>
 
       <div style={styles.card}>
-        <h1 style={styles.title}>❄️ WinterLinkFindU</h1>
-        <p style={styles.subtitle}>winter uhuyyy!! 💖💖💖</p>
-        <p style={styles.subtitle}>💖mohon jangan disebar💖</p>
+        {/* 🔥 HEADER FIX (CENTER SEMUA) */}
+        <div style={styles.header}>
+          <h1 style={styles.title}>WinterLinkFindU</h1>
+          <p style={styles.subtitle}>winter uhuyyy!!</p>
+          <p style={styles.subtitle}>💖mohon jangan disebar💖</p>
+        </div>
 
         <div style={styles.inputWrap}>
           <input
@@ -107,84 +100,61 @@ export default function Home() {
             placeholder="Paste link / ID folder..."
             style={styles.input}
           />
-          <button onClick={fetchFiles} style={styles.mainBtn}>
-            {loading ? "Loading..." : "Ambil"}
+          <button onClick={fetchFiles} style={styles.btnMain}>
+            {loading ? "..." : "Ambil"}
           </button>
         </div>
 
-        {error && <div style={styles.error}>{error}</div>}
+        {error && <p style={styles.error}>{error}</p>}
 
         {files.length > 0 && (
           <>
             <div style={styles.actions}>
-              <button
-                style={styles.btn}
-                onClick={() =>
-                  copy(files.map((f) => f.name).join("\n"), "Nama disalin!")
-                }
-              >
-                Copy Nama
+              <button onClick={() => copy(files.map((f) => f.name).join("\n"))}>
+                Nama
+              </button>
+              <button onClick={() => copy(files.map((f) => f.link).join("\n"))}>
+                Link
               </button>
               <button
-                style={styles.btn}
                 onClick={() =>
-                  copy(
-                    files.map((f) => `${f.name} ${f.link}`).join("\n"),
-                    "Semua disalin!",
-                  )
+                  copy(files.map((f) => `${f.name} ${f.link}`).join("\n"))
                 }
               >
-                Copy Semua
-              </button>
-              <button
-                style={styles.btn}
-                onClick={() =>
-                  copy(files.map((f) => f.link).join("\n"), "Link disalin!")
-                }
-              >
-                Copy Link
+                Semua
               </button>
             </div>
 
-            <p style={styles.total}>Total: {files.length}</p>
-
-            <div style={{ overflowX: "auto" }}>
-              <table style={styles.table}>
-                <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Link</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {files.map((f, i) => (
-                    <tr key={f.id}>
-                      <td>{i + 1}</td>
-                      <td>{f.name}</td>
-                      <td>
-                        <a href={f.link} target="_blank" rel="noreferrer">
-                          Buka
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div style={styles.list}>
+              {files.map((f, i) => (
+                <div key={f.id} style={styles.item}>
+                  <span>
+                    {i + 1}. {f.name}
+                  </span>
+                  <a href={f.link} target="_blank" rel="noreferrer">
+                    Buka
+                  </a>
+                </div>
+              ))}
             </div>
           </>
         )}
       </div>
 
-      {/* ANIMASI */}
-      <style>
-        {`
-          @keyframes fall {
-            0% { transform: translateY(-10px); opacity: 1; }
-            100% { transform: translateY(100vh); opacity: 0; }
-          }
-        `}
-      </style>
+      {/* ANIMATION */}
+      <style>{`
+        @keyframes fall {
+          0% { transform: translateY(-20px); opacity: 0; }
+          10% { opacity: 1; }
+          100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        @keyframes gradientMove {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -195,12 +165,15 @@ const styles: any = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
     position: "relative",
     overflow: "hidden",
+    background:
+      "linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2,#f2fcfe)",
+    backgroundSize: "400% 400%",
+    animation: "gradientMove 15s ease infinite",
   },
 
-  particleContainer: {
+  particleWrap: {
     position: "absolute",
     width: "100%",
     height: "100%",
@@ -209,27 +182,44 @@ const styles: any = {
 
   particle: {
     position: "absolute",
-    top: "-10px",
+    top: "-20px",
     animation: "fall linear infinite",
+    opacity: 0.8,
   },
 
   card: {
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(15px)",
+    background: "rgba(0,0,0,0.35)",
+    backdropFilter: "blur(12px)",
     padding: "25px",
     borderRadius: "20px",
     width: "90%",
-    maxWidth: "800px",
+    maxWidth: "700px",
     color: "#fff",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
     zIndex: 1,
   },
 
-  title: { textAlign: "center", fontSize: "2rem" },
+  // 🔥 HEADER FIX
+  header: {
+    textAlign: "center",
+    marginBottom: "15px",
+  },
 
-  subtitle: { textAlign: "center", marginBottom: "15px" },
+  title: {
+    marginBottom: "5px",
+    fontWeight: "700",
+    letterSpacing: "1px",
+  },
 
-  inputWrap: { display: "flex", gap: "10px" },
+  subtitle: {
+    margin: "0",
+    opacity: 0.85,
+    fontSize: "0.9rem",
+  },
+
+  inputWrap: {
+    display: "flex",
+    gap: "10px",
+  },
 
   input: {
     flex: 1,
@@ -238,32 +228,38 @@ const styles: any = {
     border: "none",
   },
 
-  mainBtn: {
-    padding: "10px 15px",
+  btnMain: {
+    padding: "10px",
     borderRadius: "10px",
     border: "none",
-    background: "linear-gradient(45deg,#ff9a9e,#fad0c4)",
+    background: "#ffffff22",
+    color: "#fff",
     cursor: "pointer",
   },
 
-  actions: { marginTop: "10px", display: "flex", gap: "10px" },
-
-  btn: {
-    padding: "8px",
-    border: "none",
-    borderRadius: "10px",
-    background: "linear-gradient(45deg,#a1c4fd,#c2e9fb)",
-    cursor: "pointer",
-  },
-
-  total: { marginTop: "10px" },
-
-  error: { color: "#ff6b6b" },
-
-  table: {
-    width: "100%",
+  actions: {
     marginTop: "10px",
+    display: "flex",
+    gap: "10px",
+  },
+
+  list: {
+    marginTop: "15px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+  },
+
+  item: {
+    display: "flex",
+    justifyContent: "space-between",
     background: "rgba(255,255,255,0.1)",
-    borderRadius: "10px",
+    padding: "8px",
+    borderRadius: "8px",
+  },
+
+  error: {
+    color: "#ffb3b3",
+    marginTop: "10px",
   },
 };
