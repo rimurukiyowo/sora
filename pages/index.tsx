@@ -67,82 +67,15 @@ export default function Home() {
   const particles = Array.from({ length: 25 });
 
   return (
-    <div style={styles.wrapper}>
-      {/* ❄️🌸⭐ PARTICLES */}
-      <div style={styles.particleWrap}>
-        {particles.map((_, i) => (
-          <span
-            key={i}
-            style={{
-              ...styles.particle,
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${12 + Math.random() * 10}s`,
-              fontSize: `${12 + Math.random() * 10}px`,
-            }}
-          >
-            {i % 3 === 0 ? "❄️" : i % 3 === 1 ? "🌸" : "⭐"}
-          </span>
-        ))}
-      </div>
-
-      <div style={styles.card}>
-        {/* 🔥 HEADER FIX (CENTER SEMUA) */}
-        <div style={styles.header}>
-          <h1 style={styles.title}>WinterLinkFindU</h1>
-          <p style={styles.subtitle}>winter uhuyyy!!</p>
-          <p style={styles.subtitle}>💖mohon jangan disebar💖</p>
-        </div>
-
-        <div style={styles.inputWrap}>
-          <input
-            value={folderInput}
-            onChange={(e) => setFolderInput(e.target.value)}
-            placeholder="Paste link / ID folder..."
-            style={styles.input}
-          />
-          <button onClick={fetchFiles} style={styles.btnMain}>
-            {loading ? "..." : "Ambil"}
-          </button>
-        </div>
-
-        {error && <p style={styles.error}>{error}</p>}
-
-        {files.length > 0 && (
-          <>
-            <div style={styles.actions}>
-              <button onClick={() => copy(files.map((f) => f.name).join("\n"))}>
-                Nama
-              </button>
-              <button onClick={() => copy(files.map((f) => f.link).join("\n"))}>
-                Link
-              </button>
-              <button
-                onClick={() =>
-                  copy(files.map((f) => `${f.name} ${f.link}`).join("\n"))
-                }
-              >
-                Semua
-              </button>
-            </div>
-
-            <div style={styles.list}>
-              {files.map((f, i) => (
-                <div key={f.id} style={styles.item}>
-                  <span>
-                    {i + 1}. {f.name}
-                  </span>
-                  <a href={f.link} target="_blank" rel="noreferrer">
-                    Buka
-                  </a>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* ANIMATION */}
+    <>
+      {/* 🔥 RESET BODY (HILANGIN PUTIH) */}
       <style>{`
+        body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+        }
+
         @keyframes fall {
           0% { transform: translateY(-20px); opacity: 0; }
           10% { opacity: 1; }
@@ -155,20 +88,103 @@ export default function Home() {
           100% { background-position: 0% 50%; }
         }
       `}</style>
-    </div>
+
+      <div style={styles.wrapper}>
+        {/* ❄️🌸⭐ PARTICLES */}
+        <div style={styles.particleWrap}>
+          {particles.map((_, i) => (
+            <span
+              key={i}
+              style={{
+                ...styles.particle,
+                left: `${Math.random() * 100}%`,
+                animationDuration: `${12 + Math.random() * 10}s`,
+                fontSize: `${12 + Math.random() * 10}px`,
+              }}
+            >
+              {i % 3 === 0 ? "❄️" : i % 3 === 1 ? "🌸" : "⭐"}
+            </span>
+          ))}
+        </div>
+
+        <div style={styles.card}>
+          <div style={styles.header}>
+            <h1 style={styles.title}>WinterLinkFindU</h1>
+            <p style={styles.subtitle}>winter uhuyyy!! </p>
+            <p style={styles.subtitle}>💖mohon jangan disebar💖</p>
+          </div>
+
+          <div style={styles.inputWrap}>
+            <input
+              value={folderInput}
+              onChange={(e) => setFolderInput(e.target.value)}
+              placeholder="Paste link / ID folder..."
+              style={styles.input}
+            />
+            <button onClick={fetchFiles} style={styles.btnMain}>
+              {loading ? "..." : "Ambil"}
+            </button>
+          </div>
+
+          {error && <p style={styles.error}>{error}</p>}
+
+          {files.length > 0 && (
+            <>
+              <div style={styles.actions}>
+                <button
+                  onClick={() => copy(files.map((f) => f.name).join("\n"))}
+                >
+                  Nama
+                </button>
+                <button
+                  onClick={() => copy(files.map((f) => f.link).join("\n"))}
+                >
+                  Link
+                </button>
+                <button
+                  onClick={() =>
+                    copy(files.map((f) => `${f.name} ${f.link}`).join("\n"))
+                  }
+                >
+                  Semua
+                </button>
+              </div>
+
+              <div style={styles.list}>
+                {files.map((f, i) => (
+                  <div key={f.id} style={styles.item}>
+                    <span>
+                      {i + 1}. {f.name}
+                    </span>
+                    <a href={f.link} target="_blank" rel="noreferrer">
+                      Buka
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 
 const styles: any = {
   wrapper: {
-    minHeight: "100vh",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
     overflow: "hidden",
+
+    // 🔥 FULL COLOR TANPA PUTIH
     background:
-      "linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2,#f2fcfe)",
+      "linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2,#0f2027)",
     backgroundSize: "400% 400%",
     animation: "gradientMove 15s ease infinite",
   },
@@ -184,7 +200,7 @@ const styles: any = {
     position: "absolute",
     top: "-20px",
     animation: "fall linear infinite",
-    opacity: 0.8,
+    opacity: 0.7,
   },
 
   card: {
@@ -198,7 +214,6 @@ const styles: any = {
     zIndex: 1,
   },
 
-  // 🔥 HEADER FIX
   header: {
     textAlign: "center",
     marginBottom: "15px",
@@ -207,7 +222,6 @@ const styles: any = {
   title: {
     marginBottom: "5px",
     fontWeight: "700",
-    letterSpacing: "1px",
   },
 
   subtitle: {
