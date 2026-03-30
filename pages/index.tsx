@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 type FileItem = {
   id: string;
@@ -12,24 +12,18 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const apiKey = "AIzaSyD71nWVbtMxWK4T05Ty4qMuIRTP4ij2i48";
+  const apiKey = "AIzaSyD71nWVbtMxWK4T05Ty4qMuIRTP4ij2i48"; // ganti API key kamu
 
   const extractFolderId = (input: string) => {
     const match = input.match(/[-\w]{25,}/);
     return match ? match[0] : "";
   };
 
-  const naturalSort = (a: string, b: string) => {
-    return a.localeCompare(b, undefined, {
-      numeric: true,
-      sensitivity: "base",
-    });
-  };
-
   const fetchFiles = async () => {
     const folderId = extractFolderId(folderInput);
+
     if (!folderId) {
-      setError("Masukkan link atau ID folder Google Drive yang valid.");
+      setError("Masukkan link atau ID folder yang valid.");
       setFiles([]);
       return;
     }
@@ -38,141 +32,83 @@ export default function Home() {
     setError("");
 
     try {
-      const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&orderBy=name&key=${apiKey}&fields=files(id,name)`,
-      );
-      const data = await response.json();
+      const query = encodeURIComponent(`'${folderId}' in parents`);
+      const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&key=${apiKey}`;
 
-      if (data.error) {
-        setError(data.error.message);
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        setError(
+          data?.error?.message ||
+            "Gagal mengambil data. Pastikan folder public & API valid.",
+        );
         setFiles([]);
-      } else {
-        const fetchedFiles: FileItem[] = data.files
-          .map((file: any) => ({
-            id: file.id,
-            name: file.name,
-            link: `https://drive.google.com/file/d/${file.id}/view?utm_source=grfkflwr&utm_medium=web_usp=drivesdk`,
-          }))
-          .sort((a, b) => naturalSort(a.name, b.name));
-
-        setFiles(fetchedFiles);
+        return;
       }
-    } catch {
-      setError("Terjadi kesalahan saat mengambil data.");
+
+      const fetchedFiles: FileItem[] = (data.files || [])
+        .map((file: { id: string; name: string }) => ({
+          id: file.id,
+          name: file.name,
+          link: `https://drive.google.com/file/d/${file.id}/view?utm_source=grfkflwr&utm_medium=web&utm_campaign=drivesdk`,
+        }))
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          }),
+        );
+
+      setFiles(fetchedFiles);
+    } catch (err: any) {
+      setError(err.message || "Terjadi kesalahan.");
       setFiles([]);
-    }
-
-    setLoading(false);
-  };
-
-  const copyToClipboard = (content: string, message: string) => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard
-        .writeText(content)
-        .then(() => alert(message))
-        .catch(() => fallbackCopy(content, message));
-    } else {
-      fallbackCopy(content, message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const fallbackCopy = (text: string, message: string) => {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-
-    try {
-      document.execCommand("copy");
-      alert(message);
-    } catch {
-      alert("Gagal menyalin.");
-    }
-
-    document.body.removeChild(textarea);
-  };
-const safeAlert = (msg) => {
-  if (typeof window !== "undefined") {
+  const copy = (text: string, msg: string) => {
+    navigator.clipboard.writeText(text);
     alert(msg);
-  }
-};
+  };
 
-const copyAllNames = () => {
-  if (files.length === 0) {
-    safeAlert("Tidak ada data untuk disalin!");
-    return;
-  }
-  const names = files.map((file) => file.name).join("\n");
-  copyToClipboard(names, "Semua nama berhasil disalin!");
-};
-
-const copyAllLinks = () => {
-  if (files.length === 0) {
-    safeAlert("Tidak ada data untuk disalin!");
-    return;
-  }
-  const links = files.map((file) => file.link).join("\n");
-  copyToClipboard(links, "Semua link berhasil disalin!");
-};
-
-const copyAllNamesAndLinks = () => {
-  if (files.length === 0) {
-    safeAlert("Tidak ada data untuk disalin!");
-    return;
-  }
-  const combined = files.map((file) => `${file.name} ${file.link}`).join("\n");
-  copyToClipboard(combined, "Semua nama dan link berhasil disalin!");
-};
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .then((reg) => console.log("Service Worker registered:", reg))
-          .catch((err) =>
-            console.error("Service Worker registration failed:", err),
-          );
-      });
-    }
-  }, []);
+  const particles = Array.from({ length: 40 });
 
   return (
     <div style={styles.wrapper}>
-      {/* Animasi background */}
-      <div style={styles.animatedBackground}></div>
-      {/* Efek salju */}
-      <SnowEffect />
+      {/* ❄️🌸 PARTICLES */}
+      <div style={styles.particleContainer}>
+        {particles.map((_, i) => (
+          <span
+            key={i}
+            style={{
+              ...styles.particle,
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${5 + Math.random() * 5}s`,
+              fontSize: `${12 + Math.random() * 18}px`,
+            }}
+          >
+            {i % 2 === 0 ? "❄️" : "🌸"}
+          </span>
+        ))}
+      </div>
 
-      <style>{`
-        @keyframes gradientMove {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
-
-      <div style={styles.container}>
-        <h1 style={styles.title}>WinterLinkFindU</h1>
+      <div style={styles.card}>
+        <h1 style={styles.title}>❄️ WinterLinkFindU</h1>
         <p style={styles.subtitle}>winter uhuyyy!! 💖💖💖</p>
-        <p style={styles.subtitle}>DIBILANG JANGAN SEBAR!! 💖💖💖</p>
+        <p style={styles.subtitle}>💖mohon jangan disebar💖</p>
 
-        <div style={styles.inputContainer}>
+        <div style={styles.inputWrap}>
           <input
-            type="text"
-            placeholder="Paste Link atau ID Folder Google Drive"
             value={folderInput}
             onChange={(e) => setFolderInput(e.target.value)}
+            placeholder="Paste link / ID folder..."
             style={styles.input}
           />
-          <button
-            onClick={fetchFiles}
-            disabled={loading}
-            style={styles.buttonPrimary}
-          >
-            {loading ? "Memuat..." : "Tampilkan File"}
+          <button onClick={fetchFiles} style={styles.mainBtn}>
+            {loading ? "Loading..." : "Ambil"}
           </button>
         </div>
 
@@ -180,44 +116,55 @@ const copyAllNamesAndLinks = () => {
 
         {files.length > 0 && (
           <>
-            <div style={styles.copyButtons}>
-              <button onClick={copyAllNames} style={styles.copyButton}>
+            <div style={styles.actions}>
+              <button
+                style={styles.btn}
+                onClick={() =>
+                  copy(files.map((f) => f.name).join("\n"), "Nama disalin!")
+                }
+              >
                 Copy Nama
               </button>
-              <button onClick={copyAllNamesAndLinks} style={styles.copyButton}>
+              <button
+                style={styles.btn}
+                onClick={() =>
+                  copy(
+                    files.map((f) => `${f.name} ${f.link}`).join("\n"),
+                    "Semua disalin!",
+                  )
+                }
+              >
                 Copy Semua
               </button>
-              <button onClick={copyAllLinks} style={styles.copyButton}>
+              <button
+                style={styles.btn}
+                onClick={() =>
+                  copy(files.map((f) => f.link).join("\n"), "Link disalin!")
+                }
+              >
                 Copy Link
               </button>
             </div>
 
-            <div style={styles.totalInfo}>
-              <strong>Total File: {files.length}</strong>
-            </div>
+            <p style={styles.total}>Total: {files.length}</p>
 
             <div style={{ overflowX: "auto" }}>
               <table style={styles.table}>
                 <thead>
                   <tr>
-                    <th style={styles.th}>No</th>
-                    <th style={styles.th}>Nama File</th>
-                    <th style={styles.th}>Link File</th>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Link</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {files.map((file, index) => (
-                    <tr key={file.id}>
-                      <td style={styles.td}>{index + 1}</td>
-                      <td style={styles.td}>{file.name}</td>
-                      <td style={styles.td}>
-                        <a
-                          href={file.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={styles.link}
-                        >
-                          {file.link}
+                  {files.map((f, i) => (
+                    <tr key={f.id}>
+                      <td>{i + 1}</td>
+                      <td>{f.name}</td>
+                      <td>
+                        <a href={f.link} target="_blank" rel="noreferrer">
+                          Buka
                         </a>
                       </td>
                     </tr>
@@ -228,179 +175,95 @@ const copyAllNamesAndLinks = () => {
           </>
         )}
       </div>
-    </div>
-  );
-}
 
-// Efek salju
-function SnowEffect() {
-  const [flakes, setFlakes] = useState<
-    { id: number; x: number; y: number; size: number; speed: number }[]
-  >([]);
-
-  useEffect(() => {
-    const newFlakes = Array.from({ length: 30 }).map((_, i) => ({
-      id: i,
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      size: Math.random() * 4 + 2,
-      speed: Math.random() * 1 + 0.5,
-    }));
-    setFlakes(newFlakes);
-
-    const interval = setInterval(() => {
-      setFlakes((prev) =>
-        prev.map((flake) => {
-          let y = flake.y + flake.speed;
-          if (y > window.innerHeight) {
-            y = -flake.size;
+      {/* ANIMASI */}
+      <style>
+        {`
+          @keyframes fall {
+            0% { transform: translateY(-10px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
           }
-          return { ...flake, y };
-        }),
-      );
-    }, 30);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: -1,
-      }}
-    >
-      {flakes.map((flake) => (
-        <div
-          key={flake.id}
-          style={{
-            position: "absolute",
-            top: flake.y,
-            left: flake.x,
-            width: flake.size,
-            height: flake.size,
-            background: "white",
-            borderRadius: "50%",
-            opacity: 0.8,
-          }}
-        ></div>
-      ))}
+        `}
+      </style>
     </div>
   );
 }
 
-// Styling
-const styles: { [key: string]: React.CSSProperties } = {
+const styles: any = {
   wrapper: {
-    position: "relative",
     minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
+    position: "relative",
     overflow: "hidden",
   },
-  animatedBackground: {
-    position: "fixed",
-    top: 0,
-    left: 0,
+
+  particleContainer: {
+    position: "absolute",
     width: "100%",
     height: "100%",
-    background: "linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a1c4fd)",
-    backgroundSize: "400% 400%",
-    animation: "gradientMove 15s ease infinite",
-    zIndex: -2,
+    pointerEvents: "none",
   },
-  container: {
-    padding: "1rem",
+
+  particle: {
+    position: "absolute",
+    top: "-10px",
+    animation: "fall linear infinite",
+  },
+
+  card: {
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(15px)",
+    padding: "25px",
+    borderRadius: "20px",
+    width: "90%",
     maxWidth: "800px",
-    margin: "auto",
-    fontFamily: "Arial, sans-serif",
-    background: "transparent",
-    minHeight: "100vh",
-    borderRadius: "8px",
+    color: "#fff",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    zIndex: 1,
   },
-  title: {
-    fontSize: "2rem",
-    marginBottom: "0.5rem",
-    color: "#4B0082",
-    textAlign: "center",
-  },
-  subtitle: {
-    marginBottom: "1rem",
-    textAlign: "center",
-  },
-  inputContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.5rem",
-    marginBottom: "1rem",
-  },
+
+  title: { textAlign: "center", fontSize: "2rem" },
+
+  subtitle: { textAlign: "center", marginBottom: "15px" },
+
+  inputWrap: { display: "flex", gap: "10px" },
+
   input: {
-    padding: "0.5rem",
-    fontSize: "1rem",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    width: "100%",
-  },
-  buttonPrimary: {
-    padding: "0.5rem 1rem",
-    fontSize: "1rem",
-    background: "#4B0082",
-    color: "#fff",
+    flex: 1,
+    padding: "10px",
+    borderRadius: "10px",
     border: "none",
-    borderRadius: "4px",
+  },
+
+  mainBtn: {
+    padding: "10px 15px",
+    borderRadius: "10px",
+    border: "none",
+    background: "linear-gradient(45deg,#ff9a9e,#fad0c4)",
     cursor: "pointer",
   },
-  error: {
-    color: "red",
-    marginBottom: "1rem",
-    textAlign: "center",
-  },
-  copyButtons: {
-    marginBottom: "1rem",
-    display: "flex",
-    gap: "0.5rem",
-    flexWrap: "wrap",
-    justifyContent: "flex-end",
-  },
-  copyButton: {
-    padding: "0.5rem 1rem",
-    background: "#8A2BE2",
-    color: "#fff",
+
+  actions: { marginTop: "10px", display: "flex", gap: "10px" },
+
+  btn: {
+    padding: "8px",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "10px",
+    background: "linear-gradient(45deg,#a1c4fd,#c2e9fb)",
     cursor: "pointer",
   },
-  totalInfo: {
-    marginTop: "0.5rem",
-    display: "flex",
-    justifyContent: "flex-end",
-  },
+
+  total: { marginTop: "10px" },
+
+  error: { color: "#ff6b6b" },
+
   table: {
     width: "100%",
-    borderCollapse: "collapse",
-    background: "transparent", // transparan
-    borderRadius: "8px",
-  },
-  th: {
-    border: "1px solid rgba(255,255,255,0.5)",
-    padding: "0.5rem",
-    backgroundColor: "rgba(255,255,255,0.2)", // semi transparan
-    textAlign: "left",
-    color: "#000",
-  },
-  td: {
-    border: "1px solid rgba(255,255,255,0.5)",
-    padding: "0.5rem",
-    wordBreak: "break-word",
-    backgroundColor: "transparent", // transparan
-    color: "#000",
-  },
-  link: {
-    color: "#1a0dab",
-    textDecoration: "underline",
-    wordBreak: "break-word",
+    marginTop: "10px",
+    background: "rgba(255,255,255,0.1)",
+    borderRadius: "10px",
   },
 };
