@@ -71,17 +71,17 @@ export default function Home() {
     }
 
     const fetchedFiles: FileItem[] = (data.files || [])
-      .map((f: any) => ({
-        id: f.id,
-        name: f.name,
-        link: `https://drive.google.com/file/d/${f.id}/view?utm_source=soraflwr&utm_medium=web_usp=drivesdk`,
-      }))
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, {
-          numeric: true,
-          sensitivity: "base",
-        })
-      );
+  .map((f: any) => ({
+    id: f.id,
+    name: f.name,
+    link: `https://drive.google.com/file/d/${f.id}/view?utm_source=soraflwr&utm_medium=web_usp=drivesdk`,
+  }))
+  .sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  );
 
     setFiles(fetchedFiles);
   } catch (err: any) {
