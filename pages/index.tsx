@@ -89,7 +89,7 @@ export default function Home() {
   };
 
   const particles = Array.from({ length: 25 });
-  const icons = ["❄️", "🌸", "🍒", "🍃", "🍅", "💞", "☘️"];
+  const icons = ["💐", "🌸", "🍒", "🍃", "🍅", "💞", "☘️","🪷"];
 
   return (
     <>
