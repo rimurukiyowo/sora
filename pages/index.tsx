@@ -49,7 +49,7 @@ export default function Home() {
         .map((f: any) => ({
           id: f.id,
           name: f.name,
-          link: `https://drive.google.com/file/d/${file.id}/view?utm_source=sora&utm_medium=web_usp=drivesdk`,
+          link: `https://drive.google.com/file/d/${file.id}/view?utm_source=soraflwr&utm_medium=web_usp=drivesdk`,
           }))
         }))
         .sort((a, b) =>
