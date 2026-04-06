@@ -45,19 +45,52 @@ export default function Home() {
         return;
       }
 
-      const fetchedFiles: FileItem[] = (data.files || [])
-        .map((f: any) => ({
-          id: f.id,
-          name: f.name,
-          link: `https://drive.google.com/file/d/${file.id}/view?utm_source=soraflwr&utm_medium=web_usp=drivesdk`,
-          }))
-        }))
-        .sort((a, b) =>
-          a.name.localeCompare(b.name, undefined, {
-            numeric: true,
-            sensitivity: "base",
-          }),
-        );
+    const fetchFiles = async () => {
+  const folderId = extractFolderId(folderInput);
+
+  if (!folderId) {
+    setError("Masukkan link / ID folder yang valid.");
+    setFiles([]);
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+
+  try {
+    const query = encodeURIComponent(`'${folderId}' in parents`);
+    const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&key=${apiKey}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      setError(data?.error?.message || "Gagal mengambil data.");
+      setFiles([]);
+      return;
+    }
+
+    const fetchedFiles: FileItem[] = (data.files || [])
+      .map((f: any) => ({
+        id: f.id,
+        name: f.name,
+        link: `https://drive.google.com/file/d/${f.id}/view?utm_source=soraflwr&utm_medium=web_usp=drivesdk`,
+      }))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      );
+
+    setFiles(fetchedFiles);
+  } catch (err: any) {
+    setError(err.message || "Terjadi kesalahan.");
+    setFiles([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
       setFiles(fetchedFiles);
     } catch (err: any) {
