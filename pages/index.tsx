@@ -85,8 +85,8 @@ export default function Home() {
 
   // const copyAll = () => {
   //   if (!files.length) return alert("Tidak ada data!");
-  //   copy(files.map((f) => `${f.name} ${f.link}`).join("\n"), "Semua disalin!");
-  };
+  // //   copy(files.map((f) => `${f.name} ${f.link}`).join("\n"), "Semua disalin!");
+  // };
 
   const particles = Array.from({ length: 25 });
   const icons = ["💐", "🌸", "🍒", "🍃", "🍅", "💞", "☘️","🪷"];
