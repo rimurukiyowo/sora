@@ -160,7 +160,7 @@ export default function Home() {
               <div style={styles.actions}>
                 <button style={styles.btn} onClick={copyNames}>Nama</button>
                 <button style={styles.btn} onClick={copyAll}>Semua</button>
-                <button style={styles.btn} onClick={copyLinks}>Link</button>
+                <button style={styles.btn} >Link</button>
               </div>
 
               <p style={styles.total}>Total: {files.length}</p>
