@@ -159,7 +159,7 @@ export default function Home() {
             <>
               <div style={styles.actions}>
                 <button style={styles.btn} onClick={copyNames}>Nama</button>
-                <button style={styles.btn} onClick={copyAll}>Semua</button>
+                <button style={styles.btn} >Semua</button>
                 <button style={styles.btn} >Link</button>
               </div>
 
