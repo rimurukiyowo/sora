@@ -78,15 +78,15 @@ export default function Home() {
     copy(files.map((f) => f.name).join("\n"), "Nama disalin!");
   };
 
-  // const copyLinks = () => {
-  //   if (!files.length) return alert("Tidak ada data!");
-  //   copy(files.map((f) => f.link).join("\n"), "Link disalin!");
-  // };
+  const copyLinks = () => {
+    if (!files.length) return alert("Tidak ada data!");
+    copy(files.map((f) => f.link).join("\n"), "Link disalin!");
+  };
 
-  // const copyAll = () => {
-  //   if (!files.length) return alert("Tidak ada data!");
-  // //   copy(files.map((f) => `${f.name} ${f.link}`).join("\n"), "Semua disalin!");
-  // };
+  const copyAll = () => {
+    if (!files.length) return alert("Tidak ada data!");
+    copy(files.map((f) => `${f.name} ${f.link}`).join("\n"), "Semua disalin!");
+  };
 
   const particles = Array.from({ length: 25 });
   const icons = ["💐", "🌸", "🍒", "🍃", "🍅", "💞", "☘️","🪷"];
@@ -159,8 +159,8 @@ export default function Home() {
             <>
               <div style={styles.actions}>
                 <button style={styles.btn} onClick={copyNames}>Nama</button>
-                <button style={styles.btn} >Semua</button>
-                <button style={styles.btn} >Link</button>
+                <button style={styles.btn} onClick={copyAll}>Semua</button>
+                <button style={styles.btn} onClick={copyLinks}>Link</button>
               </div>
 
               <p style={styles.total}>Total: {files.length}</p>
