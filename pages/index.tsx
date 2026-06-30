@@ -25,7 +25,7 @@ export default function Home() {
     const folderId = extractFolderId(folderInput);
 
     if (!folderId) {
-      setError("Masukkan link / ID folder yang valid.");
+      setError("Masukkan link Google Drive");
       setFiles([]);
       return;
     }
@@ -50,7 +50,7 @@ export default function Home() {
         .map((f: any) => ({
           id: f.id,
           name: f.name,
-          link: `https://drive.google.com/file/d/${f.id}/view?utm_source=soraflwr&utm_medium=web_usp=drivesdk`,
+          link: `https://drive.google.com/file/d/${f.id}/view?utm_source=sorasora&utm_medium=web_usp=drivesdk`,
         }))
         .sort((a, b) =>
           a.name.localeCompare(b.name, undefined, {
@@ -96,7 +96,7 @@ export default function Home() {
       {/* FIX HEAD NEXT.JS */}
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>WinterLinkFindU</title>
+        <title>SORA WINTER</title>
       </Head>
 
       <style>{`
@@ -136,10 +136,31 @@ export default function Home() {
 
         <div style={styles.card}>
           <div style={styles.header}>
-            <h1 style={styles.title}>WinterLinkFindU</h1>
-            <p style={styles.subtitle}>by WINTER</p>
-            <p style={styles.subtitle}>💞Jangan Sebar💞</p>
-          </div>
+  <h1 style={styles.title}>SORA WINTER</h1>
+  <p style={styles.subtitle}>💞💞</p>
+
+  <div
+    style={{
+      marginTop: "12px",
+      padding: "10px 14px",
+      borderRadius: "10px",
+      background: "rgba(255,255,255,0.15)",
+      fontSize: "0.85rem",
+      lineHeight: "1.6",
+      textAlign: "left",
+    }}
+  >
+    <strong>📢 Syarat Penggunaan</strong>
+    <br />
+    • Link ini hanya untuk penggunaan pribadi.
+    <br />
+    • Dilarang membagikan link kepada siapa pun.
+    <br />
+    • Dilarang membantu orang lain mengakses atau mengisi Drive tanpa izin.
+    <br />
+    • Jika syarat dilanggar, link akan dihapus sehingga semua pengguna kehilangan akses.
+  </div>
+</div>
 
           <div style={styles.inputWrap}>
             <input
@@ -212,21 +233,20 @@ const styles: any = {
     opacity: 0.8,
   },
 
-  card: {
-    width: "100%",
-    maxWidth: "420px",
-    maxHeight: "95vh",
-    borderRadius: "20px",
-    padding: "16px",
-    background: "rgba(255, 140, 66, 0.18)",
-    backdropFilter: "blur(20px)",
-    border: "1px solid rgba(255,255,255,0.2)",
-    color: "#fff",
-    display: "flex",
-    flexDirection: "column",
-    boxShadow: "0 10px 30px rgba(255,120,60,0.3)",
-  },
-
+card: {
+  width: "100%",
+  maxWidth: "420px",
+  maxHeight: "95vh",
+  borderRadius: "20px",
+  padding: "16px",
+  background: "rgba(255, 140, 66, 0.18)",
+  backdropFilter: "blur(20px)",
+  border: "1px solid rgba(255,255,255,0.2)",
+  color: "#000", // <-- ubah dari #fff menjadi #000
+  display: "flex",
+  flexDirection: "column",
+  boxShadow: "0 10px 30px rgba(255,120,60,0.3)",
+},
   header: {
     textAlign: "center",
     marginBottom: "15px",
