@@ -190,39 +190,132 @@ const styles: any = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(135deg,#667eea,#764ba2,#ff758c,#42e695)",
+    background:
+      "linear-gradient(135deg, #ff8c42, #ff6b35, #ffb347, #ff7e5f)",
     backgroundSize: "300% 300%",
     animation: "gradientMove 12s ease infinite",
     fontFamily: "sans-serif",
     padding: "12px",
   },
-  particleWrap: { position: "absolute", width: "100%", height: "100%", pointerEvents: "none" },
-  particle: { position: "absolute", top: "-20px", animation: "fall linear infinite", opacity: 0.8 },
+
+  particleWrap: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none",
+  },
+
+  particle: {
+    position: "absolute",
+    top: "-20px",
+    animation: "fall linear infinite",
+    opacity: 0.8,
+  },
+
   card: {
     width: "100%",
     maxWidth: "420px",
     maxHeight: "95vh",
     borderRadius: "20px",
     padding: "16px",
-    background: "rgba(255,255,255,0.15)",
+    background: "rgba(255, 140, 66, 0.18)",
     backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.2)",
     color: "#fff",
     display: "flex",
     flexDirection: "column",
+    boxShadow: "0 10px 30px rgba(255,120,60,0.3)",
   },
-  header: { textAlign: "center", marginBottom: "15px" },
-  title: { fontSize: "1.4rem", fontWeight: "700", margin: 0 },
-  subtitle: { fontSize: "0.8rem", opacity: 0.8 },
-  inputWrap: { display: "flex", gap: "8px" },
-  input: { flex: 1, padding: "12px", borderRadius: "12px", border: "none" },
-  btnMain: { padding: "12px", borderRadius: "12px", border: "none" },
-  actions: { display: "flex", gap: "8px", marginTop: "10px" },
-  btn: { flex: 1, padding: "8px", borderRadius: "10px", border: "none" },
-  total: { marginTop: "8px", fontSize: "0.85rem" },
-  error: { color: "#ffd6d6", marginTop: "10px" },
-  listWrap: { marginTop: "10px", overflowY: "auto", flex: 1 },
-  listItem: { padding: "12px", borderRadius: "12px", marginBottom: "8px" },
-  index: { fontSize: "0.7rem", opacity: 0.7 },
-  name: { fontWeight: 500 },
-  link: { fontSize: "0.8rem", textDecoration: "underline" },
+
+  header: {
+    textAlign: "center",
+    marginBottom: "15px",
+  },
+
+  title: {
+    fontSize: "1.4rem",
+    fontWeight: "700",
+    margin: 0,
+  },
+
+  subtitle: {
+    fontSize: "0.8rem",
+    opacity: 0.85,
+  },
+
+  inputWrap: {
+    display: "flex",
+    gap: "8px",
+  },
+
+  input: {
+    flex: 1,
+    padding: "12px",
+    borderRadius: "12px",
+    border: "none",
+  },
+
+  btnMain: {
+    padding: "12px",
+    borderRadius: "12px",
+    border: "none",
+    background: "#ff6b35",
+    color: "#fff",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
+
+  actions: {
+    display: "flex",
+    gap: "8px",
+    marginTop: "10px",
+  },
+
+  btn: {
+    flex: 1,
+    padding: "8px",
+    borderRadius: "10px",
+    border: "none",
+    background: "#ff9f43",
+    color: "#fff",
+    cursor: "pointer",
+  },
+
+  total: {
+    marginTop: "8px",
+    fontSize: "0.85rem",
+  },
+
+  error: {
+    color: "#ffe5d0",
+    marginTop: "10px",
+  },
+
+  listWrap: {
+    marginTop: "10px",
+    overflowY: "auto",
+    flex: 1,
+  },
+
+  listItem: {
+    padding: "12px",
+    borderRadius: "12px",
+    marginBottom: "8px",
+    background: "rgba(255,255,255,0.12)",
+  },
+
+  index: {
+    fontSize: "0.7rem",
+    opacity: 0.7,
+  },
+
+  name: {
+    fontWeight: 500,
+  },
+
+  link: {
+    fontSize: "0.8rem",
+    textDecoration: "underline",
+    color: "#fff8e8",
+  },
 };
