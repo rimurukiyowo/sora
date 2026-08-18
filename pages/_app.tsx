@@ -6,19 +6,34 @@
 //}
 
 //export default MyApp
-import Head from 'next/head';
+// import Head from 'next/head';
 
-function MyApp({ Component, pageProps }) {
+// function MyApp({ Component, pageProps }) {
+//   return (
+//     <>
+//       <Head>
+//         <link rel="manifest" href="/manifest.json" />
+//         <link rel="icon" href="/1000303458-removebg-preview.png" />
+//         <meta name="theme-color" content="#000000" />
+//       </Head>
+//       <Component {...pageProps} />
+//     </>
+//   );
+// }
+
+// export default MyApp;
+
+
+import type { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
+
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
-    <>
-      <Head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/1000303458-removebg-preview.png" />
-        <meta name="theme-color" content="#000000" />
-      </Head>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
-    </>
+    </SessionProvider>
   );
 }
-
-export default MyApp;
